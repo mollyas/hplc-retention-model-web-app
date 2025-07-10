@@ -1,0 +1,57 @@
+
+<br>
+<hr>
+<br>
+
+<h2>2. Insert Parameters for Isocratic NK Model</h2>
+<p>Once you have input all of your variables, hit "Generate" to see the outputs below.</p>
+
+<br>
+
+<h3>Experimental Data</h3>
+
+
+<div class="NK_input_tables">
+  <div id="table-and-buttons-wrapper">
+    <div class="NK_single_variable_inputs">
+      <table>
+        <thead>
+          <th>t<sub>ex</sub></th>
+          <th>t<sub>m</sub></th>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td><input type="number" name = "tex" id = "tex_input" placeholder="0.0" step="0.01"></td>
+            <td><input type="number" name = "tm" id = "tm_input" placeholder="0.0" step="0.01"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+
+    <table id="NK_exp_data_table">
+      <thead>
+        <tr>
+          <th>Phi (0-100%)</th>
+          <th>Retention Time (min)</th>
+          <th></th>
+        </tr>
+      </thead>
+
+      <tbody id="isoNK_tableBody">
+        <tr>
+          <td><input type="number" name="phi" placeholder="0.0" step="0.01"></td>
+          <td><input type="number" name="retention_time_isoNK" placeholder="0.0" step="0.01"></td>
+          <td><button onclick="deleteRow(this)">x</button></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="addRow_Generate_button_group">
+      <button id="addRowButtonIsoNK">Add Row</button>
+      <button id = "generateIsoNKModelButton" class="submit-button" type="submit">Generate</button>
+    </div>
+  </div>
+
+</div>

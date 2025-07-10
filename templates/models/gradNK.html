@@ -1,0 +1,65 @@
+
+<br>
+<hr>
+<br>
+
+<h2>2. Insert Parameters for Gradient NK Model</h2>
+<p>Once you have input all of your variables, hit "Generate" to see the outputs below.</p>
+
+<br>
+
+<h3>Experimental Data</h3>
+
+
+<div class="NK_input_tables">
+    <div class="NK_single_variable_inputs">
+      <table>
+        <thead>
+          <th>Phi<sub>i</sub> (0-100%)</th>
+          <th>Phi<sub>f</sub> (0-100%)</th>
+          <th>t<sub>d</sub> (min)</th>
+          <th>t<sub>ex</sub> (min)</th>
+          <th>t<sub>m</sub> (min)</th>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td><input type="number" name = "phi_i" id = "phi_i" placeholder="0.0" step="0.01"></td>
+            <td><input type="number" name = "phi_f" id = "phi_f" placeholder="0.0" step="0.01"></td>
+            <td><input type="number" name = "td" id = "td" placeholder="0.0" step="0.01"></td>
+            <td><input type="number" name = "tex" id = "tex" placeholder="0.0" step="0.01"></td>
+            <td><input type="number" name = "tm" id = "tm" placeholder="0.0" step="0.01"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+
+    <div id="table-and-buttons-wrapper">
+      <table id="NK_exp_data_table">
+        <thead>
+          <tr>
+            <th>t<sub>g</sub> (min)</th>
+            <th>Retention Time (min)</th>
+            <th></th>
+          </tr>
+        </thead>
+
+        <tbody id="gradNK_tableBody">
+          <tr>
+            <td><input type="number" name="tg" placeholder="0.0" step="0.01"></td>
+            <td><input type="number" name="retention_time_gradNK" placeholder="0.0" step="0.01"></td>
+            <td><button onclick="deleteRow(this)">x</button></td>
+          </tr>
+        </tbody>
+      </table>
+
+
+      <div class="addRow_Generate_button_group">
+        <button id="addRowButtonGradNK">Add Row</button>
+        <button id = "generateGradNKModelButton" class="submit-button" type="submit">Generate</button>
+      </div>
+    </div>
+  </div>
+
+</div>

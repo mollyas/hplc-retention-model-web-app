@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Terminology</h1>
+
+<br>
+
+<h2>Elution Methods</h2>
+<p><b>Isocratic</b> - mobile phase remains constant throughout the chromatographic run</p>
+<p><b>Gradient</b> - mobile phase composition progressively changes throughout the chromatographic run</p>
+
+<br>
+<hr>
+<br>
+
+<h2>Symbols</h2>
+<p><b>tr</b> - retention time</p>
+<p><b>tex</b> - extra time</p>
+<p><b>tm</b> - dead time</p>
+<p><b>td</b> - dwell time</p>
+
+<br>
+<hr>
+<br>
+
+<h2>Fitting Models</h2>
+<p><b>Neue-Kuss Model</b> - non-linear solvent strength model</p>
+
+<p1>Isocratic Fit: \begin{equation} l n(k)=l n\left(k_w\right)+2 l n\left(1+S_2 \phi\right)-\left[\frac{S_1
+    \phi}{1+S_2 \phi}\right] \end{equation}
+</p1>
+
+<p1>Gradient Fit:  <span style="font-size: 1.5em;">\begin{equation} k_{\text {eff }}=\frac{t_d}{t_m}+\frac{\frac{\phi_i+\frac{1+S_2 \phi_i}{S_1}
+    \ln \left\{\beta \cdot k_w \cdot S_1\left(t_m-\frac{t_d}{k_i}\right) \exp \left(\frac{-S_1 \phi_i}{1+S_2
+    \phi_i}\right)+1\right\}}{1-\frac{S_2\left(1+S_2 \phi_i\right)}{S_1} \ln \left\{\beta \cdot k_w \cdot S_1
+    \left(t_m-\frac{t_d}{k_i}\right) \exp \left(\frac{-S_1 \phi_i}{1+S_2 \phi_i}\right)+1\right\}}-\phi_i}{
+    \beta \cdot t_m} \end{equation}</span>
+</p1>
+
+<br>
+
+<p><b>Linear Solvent System Model</b> - name speaks for itself</p>
+
+<p1>Isocratic Fit: \begin{equation} \ln(k)=ln(k_w) - S_1\phi \end{equation}</p1>
+
+<p1>Gradient Fit: \begin{equation}
+k_{e_{f f}}=\frac{t_d}{t_m}+\frac{1}{b} \ln \left(\frac{b \cdot k_i\left(t_m-\frac{t_d}{k_i}\right)}{t_m}+1\right)
+\end{equation}
+</p1>
+
+
+<br>
+<hr>
+<br>
+
+<h2>How K<sub>eff</sub> is calculated</h2>
+<p><b>And maybe some more here</b> - I need to test sizing</p>
+
+<br>
+<hr>
+<br>
+
+<h2>Some other stuff here</h2>
+<p><b>And maybe some more here</b> - I need to test sizing</p>
+
+<br>
+<hr>
+<br>
+
+<h2>Some other stuff here</h2>
+<p><b>And maybe some more here</b> - I need to test sizing</p>
+
+<br>
+<hr>
+<br>
+
+<h2>Some other stuff here</h2>
+<p><b>And maybe some more here</b> - I need to test sizing</p>
+
+{% endblock %}
+

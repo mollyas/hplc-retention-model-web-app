@@ -1,0 +1,339 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Model Fitter</h1>
+
+<br>
+
+<h2>1. Select a Model</h2>
+
+<p>
+    Once you have selected the method, hit "Submit Method" to generate the
+    correct inputs below.
+</p>
+
+<br>
+<!--method drop downs-->
+<form id="selectModel">
+  <label for="chosenElution">Elution Method: </label>
+  <select name="chosenElution" id="chosenElution">
+      <option value="selectElution">Select One</option>
+      <option value="isocratic">Isocratic</option>
+      <option value="gradient">Gradient</option>
+  </select>
+
+  <label for="chosenModel">Model: </label>
+  <select name="chosenModel" id="chosenModel">
+      <option value="selectModel">Select One</option>
+    <option value="NK">Neue-Kuss</option>
+    <option value="LSS">Linear Solvent System</option>
+  </select>
+
+  <button class="submit-button" type="submit">Submit Method</button>
+</form>
+
+
+<div id="chosenMethod"></div>
+
+<br>
+<hr>
+<br>
+
+<div id="plotly-plot-container" style="height: 600px; width: 100%;"></div>
+
+
+<script>
+  // function to delete a row from table
+  function deleteRow(button) {
+    const row = button.closest("tr");
+    if (row) row.remove();
+  }
+
+  // 🔥🔥🔥 generates the proper model inputs
+  document.getElementById("selectModel").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const chosenElution = document.getElementById("chosenElution").value;
+    const chosenModel = document.getElementById("chosenModel").value;
+
+    fetch("/process_model", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ chosenElution, chosenModel }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      document.getElementById("chosenMethod").innerHTML = data.result;
+      if (chosenElution === "isocratic" && chosenModel === "NK") {
+        setupIsoNKListeners();
+      } else if (chosenElution === "gradient" && chosenModel === "NK") {
+        setupGradNKListeners();
+      }
+    });
+  });
+
+
+  // 🔥🔥🔥 isoNK Functions
+  function setupIsoNKListeners() {
+      const addRowButton = document.getElementById("addRowButtonIsoNK");
+      const tableBody = document.getElementById("isoNK_tableBody");
+
+      if (addRowButton && tableBody) {
+        addRowButton.addEventListener("click", function () {
+          const newRow = document.createElement("tr");
+          newRow.innerHTML = `
+              <td><input type="number" name="phi" step="0.01" placeholder="0.0"></td>
+              <td><input type="number" name="retention_time_isoNK" step="0.01" placeholder="0.0"></td>
+              <td><button onclick="deleteRow(this)">x</button></td>
+            `;
+          tableBody.appendChild(newRow);
+        });
+      }
+
+      // Re-attach the click listener to the generate button
+      const generateButton = document.getElementById("generateIsoNKModelButton");
+      if (generateButton) {
+        generateButton.addEventListener("click", function (event) {
+          event.preventDefault();
+
+          const phiInputs = document.querySelectorAll('input[name="phi"]');
+          const retentionInputs = document.querySelectorAll('input[name="retention_time_isoNK"]');
+
+          const phi_values = [];
+          const retention_time = [];
+          const tm = parseFloat(document.querySelector('input[name="tm"]').value);
+          const tex = parseFloat(document.querySelector('input[name="tex"]').value);
+
+          phiInputs.forEach(input => {
+              const val = parseFloat(input.value);
+              if (!isNaN(val)) phi_values.push(val);
+          });
+
+          retentionInputs.forEach(input => {
+              const val = parseFloat(input.value);
+              if (!isNaN(val)) retention_time.push(val);
+          });
+
+
+          if (isNaN(tm) || isNaN(tex) || phi_values.length === 0 || retention_time.length === 0) {
+              alert("Please enter valid values for t_m, t_ex, and at least one data pair.");
+              return;
+          }
+
+
+          fetch('/fit_iso_nk_model', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                  phi: phi_values,
+                  retention: retention_time,
+                  tm: tm,
+                  tex: tex
+              })
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.status === "success") {
+                  const plotContainer = document.getElementById("plotly-plot-container");
+
+                  // Clear any previous content
+                  plotContainer.innerHTML = "";
+
+                  const traceFit = {
+                      x: data.x_fit,
+                      y: data.y_fit,
+                      mode: "lines",
+                      name: "Fitted Model",
+                      line: { color: "blue" }
+                  };
+
+                  const traceExp = {
+                      x: data.x_exp,
+                      y: data.y_exp,
+                      mode: "markers",
+                      name: "Experimental Data",
+                      marker: { color: "red", size: 10 }
+                  };
+
+                  const layout = {
+                      title: "Isocratic NK Model Fit",
+                      xaxis: { title: "Phi (ϕ, % Organic)" },
+                      yaxis: { title: "Retention Factor (k)", range: [0, 100]},
+                      hovermode: "closest",
+                      annotations: [{
+                            xref: "paper",
+                            yref: "paper",
+                            x: 1.02, // Align with the legend's x-position
+                            y: 0.8,
+                            texttype: "html",
+                            text: `Parameters: <br> kw: ${data.kw}  <br> +/- ${data.kw_err} <br> s1: ${data.s1} +/- ${data.s1_err}
+                            <br> s2: ${data.s2} +/- ${data.s2_err}`,
+                            showarrow: false,
+                            align: "left",
+                            xanchor: "left"
+                      }]
+
+                  };
+
+                  var config = {
+                      showEditInChartStudio: true,
+                      plotlyServerURL: "https://chart-studio.plotly.com",
+                      editable: true,
+                      displayModeBar: true,
+                      displaylogo: false,
+                      modeBarButtonsToRemove: ['lasso2d', 'select2d']
+                  };
+
+                  Plotly.newPlot(plotContainer, [traceFit, traceExp], layout, config);
+              } else {
+                  console.error("Server returned an error:", data);
+                  alert("Error from server: " + (data.message || "Unknown error"));
+              }
+          })
+          .catch(error => {
+              console.error('Error during fetch:', error);
+              alert('An error occurred while fetching the plot: ' + error.message);
+          });
+        });
+      }
+  }
+
+  // 🔥🔥🔥 gradNK Functions
+  function setupGradNKListeners() {
+      const addRowButton = document.getElementById("addRowButtonGradNK");
+      const tableBody = document.getElementById("gradNK_tableBody");
+
+      if (addRowButton && tableBody) {
+        addRowButton.addEventListener("click", function () {
+          const newRow = document.createElement("tr");
+          newRow.innerHTML = `
+              <td><input type="number" name="tg" step="0.01" placeholder="0.0"></td>
+              <td><input type="number" name="retention_time_gradNK" step="0.01" placeholder="0.0"></td>
+              <td><button onclick="deleteRow(this)">x</button></td>
+            `;
+          tableBody.appendChild(newRow);
+        });
+      }
+
+      // Re-attach the click listener to the generate button
+      const generateButton = document.getElementById("generateGradNKModelButton");
+      if (generateButton) {
+        generateButton.addEventListener("click", function (event) {
+          event.preventDefault();
+
+          const tgInputs = document.querySelectorAll('input[name="tg"]');
+          const retentionInputs = document.querySelectorAll('input[name="retention_time_gradNK"]');
+
+          const tg_values = [];
+          const retention_time = [];
+
+          tgInputs.forEach(input => {
+              const val = parseFloat(input.value);
+              if (!isNaN(val)) tg_values.push(val);
+          });
+
+          retentionInputs.forEach(input => {
+              const val = parseFloat(input.value);
+              if (!isNaN(val)) retention_time.push(val);
+          });
+
+          const phi_i = parseFloat(document.querySelector('input[name="phi_i"]').value);
+          const phi_f = parseFloat(document.querySelector('input[name="phi_f"]').value);
+          const td = parseFloat(document.querySelector('input[name="td"]').value);
+          const tex = parseFloat(document.querySelector('input[name="tex"]').value);
+          const tm = parseFloat(document.querySelector('input[name="tm"]').value);
+
+          if (isNaN(phi_i) || isNaN(phi_f) || isNaN(td) || isNaN(tex) || isNaN(tm)) {
+              alert("Please enter valid values.");
+              return;
+          }
+
+
+          fetch('/fit_grad_nk_model', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                  tg: tg_values,
+                  retention: retention_time,
+                  phi_i: phi_i,
+                  phi_f: phi_f,
+                  td: td,
+                  tex: tex,
+                  tm: tm
+              })
+          })
+
+
+          .then(response => response.json())
+          .then(data => {
+              if (data.status === "success") {
+                  const plotContainer = document.getElementById("plotly-plot-container");
+
+                  // Clear any previous content
+                  plotContainer.innerHTML = "";
+
+                  const traceFit = {
+                      x: data.x_fit,
+                      y: data.y_fit,
+                      mode: "lines",
+                      name: "Fitted Model",
+                      line: { color: "blue" }
+                  };
+
+
+                  const layout = {
+                      title: "Gradient NK Model Fit",
+                      xaxis: { title: "Phi (ϕ, % Organic)" },
+                      yaxis: { title: "Retention Factor (k)", range: [0, 100]},
+                      hovermode: "closest",
+                      showlegend: true,
+                      annotations: [{
+                            xref: "paper",
+                            yref: "paper",
+                            x: 1.02, // Align with the legend's x-position
+                            y: 0.8,
+                            texttype: "html",
+                            text: `Parameters: <br> kw: ${data.kw} +/- ${data.kw_err} <br> s1: ${data.s1} +/- ${data.s1_err}
+                                    <br> s2: ${data.s2} +/- ${data.s2_err}`,
+                            showarrow: false,
+                            align: "left",
+                            xanchor: "left",
+                      }]
+
+                  };
+
+                  var config = {
+                      showEditInChartStudio: true,
+                      plotlyServerURL: "https://chart-studio.plotly.com",
+                      editable: true,       // This should be in the config object
+                      displayModeBar: true, // Ensure the modebar is displayed
+                      displaylogo: false    // This should also be in the config object
+                  };
+
+                  Plotly.newPlot(plotContainer, [traceFit], layout, config);
+
+              } else {
+                  console.error("Server returned an error:", data);
+                  alert("Error from server: " + (data.message || "Unknown error"));
+              }
+          })
+          .catch(error => {
+              console.error('Error during fetch:', error);
+              alert('An error occurred while fetching the plot: ' + error.message);
+          });
+        });
+      }
+  }
+
+
+</script>
+
+
+{% endblock %}

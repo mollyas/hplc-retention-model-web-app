@@ -1,0 +1,72 @@
+
+<br>
+<hr>
+<br>
+
+<h2>2. Insert Parameters for Gradient LSS Model</h2>
+<p>Once you have input all of your variables, hit "Generate" to see the outputs below.</p>
+
+<br>
+
+<div class="table-container">
+    <h3>
+        Parameters
+        <div class="tooltip">
+            <button class="info-button">?</button>
+            <span class="tooltiptext">Go to the "Learn" tab to learn more about the Parameters</span>
+        </div>
+    </h3>
+
+    <form id="parametersForm">
+        <table id="gradLSS_model_parameters">
+            <tr>
+                <th style="text-align: left;">V<sub>m</sub> (mL)</th>
+                <td><input type="number" name="V_m" value="0.0" step="0.01"></td>
+                <th style="text-align: left;">V<sub>ex</sub> (mL)</th>
+                <td><input type="number" name="V_ex" value="0.0" step="0.01"></td>
+            </tr>
+            <tr>
+                <th style="text-align: left;">V<sub>loop</sub> (mL)</th>
+                <td><input type="number" name="V_loop" value="0.0" step="0.01"></td>
+                <th style="text-align: left;">V<sub>d, pump</sub> (mL)</th>
+                <td><input type="number" name="V_d,pump" value="0.0" step="0.01"></td>
+            </tr>
+            <tr>
+                <th style="text-align: left;">f<sub>R</sub> (mL/min)</th>
+                <td><input type="number" name="f_R" value="0.0" step="0.01"></td>
+                <th style="text-align: left;">t<sub>ASM</sub> (min)</th>
+                <td><input type="number" name="t_ASM" value="0.0" step="0.01"></td>
+            </tr>
+        </table>
+    </form id>
+</div>
+
+<br>
+<br>
+
+<div class="table-container">
+    <h3>Experimental Values</h3>
+    <form id="expValuesForm">
+        <table id="gradLSS_exp_values">
+            <tr>
+                <th>Φ<sub>i</sub> (%B)</th>
+                <th>Φ<sub>f</sub> (%B)</th>
+                <th>t<sub>g</sub> (min)</th>
+                <th>t<sub>R</sub> (min)</th>
+                <th>k<sub>eff</sub></th>
+            </tr>
+
+            <tr>
+                <td><input type="number" name="phi_i" value="0.0" step="1"></td>
+                <td><input type="number" name="phi_f" value="0.0" step="1"></td>
+                <td><input type="number" name="t_g" value="0.0" step="0.01"></td>
+                <td><input type="number" name="t_R" value="0.0" step="0.01"></td>
+                <td>102.3</td>
+            </tr>
+        </table>
+
+        <br>
+        <!--submit button-->
+        <button class="submit-button" type="submit" style="text-align: left">Generate</button>
+    </form>
+</div>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href=".\static\styles.css">
+    <title>HPLC Retention Modeling</title>
+    <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+    <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+    <script src="{{ url_for('static', filename='js/model_fitter.js') }}"></script>
+</head>
+<body>
+    <header class="header">
+        <img src=".\static\images\GustavusLogo.png" alt="Gustavus Logo" class="logo-img">
+        <div class = "header-all-text">
+            <h1 class = "header-title">HPLC Retention Modeling</h1>
+            <h1 class = "header-text">A site dedicated to .....</h1>
+        </div>
+    </header>
+
+    <div class="content-container">
+        <nav class="vertical-nav">
+            <a href="{{ url_for('index', page_name='home') }}" class="{{ 'active' if current_page == 'home' else '' }}">Home</a>
+            <a href="{{ url_for('index', page_name='about') }}" class="{{ 'active' if current_page == 'about' else '' }}">About</a>
+            <a href="{{ url_for('index', page_name='model_fitter') }}" class="{{ 'active' if current_page == 'model_fitter' else '' }}">Model Fitter</a>
+            <a href="{{ url_for('index', page_name='terminology') }}" class="{{ 'active' if current_page == 'terminology' else '' }}">Terminology</a>
+            <a href="{{ url_for('index', page_name='other_works') }}" class="{{ 'active' if current_page == 'other_works' else '' }}">Other Works</a>
+        </nav>
+
+        <main id="main-content">
+            {% block content %}
+            {% endblock %}
+        </main>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-top"></div>
+        <div class="footer-bottom">
+            <p>Gustavus Adolphus College</p>
+        </div>
+    </footer>
+
+
+</body>
+</html>
